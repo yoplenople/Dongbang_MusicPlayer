@@ -10,13 +10,14 @@ def home():
     return redirect(url_for('chat'))  # 채팅 페이지로 리디렉션
 
 @app.route('/chat', methods=['GET', 'POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 def chat():
     if request.method == 'POST':
-        command = request.form['command']
-        # 여기서 명령어를 처리하는 로직을 추가하세요.
-        response = f"명령어 '{command}'이(가) 수신되었습니다."
-        return jsonify({'response': response})
-    return render_template('chat.html')
+        command = request.form['command']  # 사용자가 입력한 명령어
+        response = handle_command(command)  # 명령어 처리
+        return jsonify({'response': response})  # JSON 형식으로 응답 반환
+    return render_template('chat.html')  # GET 요청 시 HTML 페이지 반환
+
 
 def handle_command(command):
     global current_song
