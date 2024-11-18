@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음악 재생 명령어</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .chat-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 50px;
+        }
+        #chat {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .user-message {
+            text-align: right;
+            color: #007bff;
+        }
+        .bot-message {
+            text-align: left;
+            color: #28a745;
+        }
+        #command {
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+        .btn {
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container chat-container">
+        <h1 class="text-center">음악 재생 명령어 입력</h1>
+        <div id="chat" class="border p-3">
+            <!-- 채팅 메시지가 여기 표시됩니다. -->
+        </div>
+        <form id="commandForm" class="mt-3">
+            <input type="text" id="command" class="form-control" placeholder="명령어를 입력하세요..." required>
+            <button type="submit" class="btn btn-primary mt-2">전송</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#commandForm').on('submit', function(e) {
+                e.preventDefault();
+                var command = $('#command').val();
+                $.post('/chat', { command: command }, function(data) {
+                    $('#chat').append('<div class="message user-message">사용자: ' + command + '</div>');
+                    $('#chat').append('<div class="message bot-message">봇: ' + data.response + '</div>');
+                    $('#command').val(''); // 입력 필드 초기화
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight); // 스크롤 아래로 이동
+                });
+            });
+        });
+    </script>
+</body>
+</html>
