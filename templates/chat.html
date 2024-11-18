@@ -63,8 +63,9 @@
             $('#commandForm').on('submit', function(e) {
                 e.preventDefault();
                 var command = $('#command').val();
+                $('#chat').append('<div class="message user-message">사용자: ' + command + '</div>');
+                
                 $.post('/chat', { command: command }, function(data) {
-                    $('#chat').append('<div class="message user-message">사용자: ' + command + '</div>');
                     $('#chat').append('<div class="message bot-message">봇: ' + data.response + '</div>');
                     $('#command').val(''); // 입력 필드 초기화
                     $('#chat').scrollTop($('#chat')[0].scrollHeight); // 스크롤 아래로 이동
