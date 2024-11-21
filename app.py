@@ -25,13 +25,16 @@ def handle_command(command):
     
     command = command.lower()
     
+    # 명령어 수신 확인
+    print(f"Received command: {command}")  # 콘솔에 명령어 출력
+
     if command.startswith("play "):
         song_name = command[5:]  # "play " 이후의 곡명 추출
         playlist.append(song_name)  # 플레이리스트에 추가
         if current_song is None:
             current_song = song_name  # 현재 곡으로 설정
-            play_song(song_name)  # 실제 곡 재생 함수 호출
-            return f"'{song_name}'을(를) 재생하고 있습니다."
+            response = play_song(song_name)  # 실제 곡 재생 함수 호출
+            return response
         else:
             return f"'{song_name}'이(가) 플레이리스트에 추가되었습니다."
     
@@ -52,8 +55,8 @@ def handle_command(command):
     elif command == "skip":
         if playlist:
             current_song = playlist.pop(0)  # 다음 곡으로 넘어감
-            play_song(current_song)  # 실제 곡 재생 함수 호출
-            return f"'{current_song}'을(를) 재생하고 있습니다."
+            response = play_song(current_song)  # 실제 곡 재생 함수 호출
+            return response
         else:
             current_song = None
             return "재생할 곡이 없습니다."
@@ -85,7 +88,16 @@ def play_song(song_name):
     # 유튜브에서 비디오 검색 후 재생
     video_url = search_youtube(song_name)
     if video_url:
-        subprocess.run(["cvlc", video_url])  # VLC로 비디오 URL 재생
+        print(f"Playing: {video_url}")  # 재생할 URL 콘솔에 출력
+        result = subprocess.run(["cvlc", video_url], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # 재생 결과 확인
+        if result.returncode != 0:
+            error_message = result.stderr.decode().strip()
+            print(f"Error: {error_message}")  # 오류 메시지 콘솔에 출력
+            return "기기 연결 실패: 음악을 재생할 수 없습니다."
+        
+        return f"'{song_name}'을(를) 재생하고 있습니다."
     else:
         return "유튜브에서 비디오를 찾을 수 없습니다."
 
